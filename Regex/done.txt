@@ -1,0 +1,21 @@
+# Palavra reservada
+\b(int|char|long|short|float|double|void|if|else|for|while|do|break|continue|struct|switch|case|default|return)\b
+
+# Operador
+# == != += -= *= <= >= = OU ++ -- && || + - & | OU * / ! % < > ->
+([=!+\-\*/<>]?\=)|(\+|\-|\&|\|){1,2}|(\*|\/|\!|%|\<|\>|\-\>)
+
+# Delimitador
+(\(|\)|\[|\]|\{|\})
+
+# Constante numérica interira
+\b(?<![A-Za-z_."'])\d+(?![A-Za-z_."'])\b
+
+# Constante numérica ponto fluante
+(?<![A-Za-z_"'])\d*\.\d*(?![A-Za-z_"'])
+
+# Constante textual
+\".*\"
+
+# Identificadores 
+\b[A-Za-z_]+\w*\b

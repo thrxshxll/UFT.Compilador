@@ -1,0 +1,5 @@
+IF ODD 8 THEN
+    BEGIN
+        PRINT 1;
+    END;
+.

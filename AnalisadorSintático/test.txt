@@ -1,0 +1,9 @@
+CONST max = 100;
+VAR arg, ret;
+
+
+PROCEDURE square;
+BEGIN
+  PRINT 666;
+END;
+.
