@@ -27,7 +27,7 @@ class Lex:
             
             endpos = match.end()
             self.content = self.content[endpos:].lstrip()
-            print(self.content)
+            # print(self.content)
             return rule.extract_token(match.group(0))
 
         raise Exception(f'Lexical Error: symbol {self.content[0]} not recognized')

@@ -8,10 +8,10 @@ with open(sys.argv[1], mode='r') as codefile:
     for line in codefile:
         code += ''.join(line)
 
-print('parsing content')
+# print('parsing content')
 content = code
 print(content)
-print('\n\n')
+print('\n')
 
 lex = Lex(content, [ \
     rules.KeywordRule(), \
@@ -28,4 +28,4 @@ while True:
     token_atual = lex.next()
     if token_atual is None:
         break
-    print(f'\ntoken extraido: {token_atual}\n\n')
+    print(f'token extraido: {token_atual}\n\n')
