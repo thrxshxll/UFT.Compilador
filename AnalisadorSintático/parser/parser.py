@@ -15,23 +15,21 @@ class Parser:
 
     def proximoToken(self):
         self.atualToken = self.codigoFonte.pop(0)
-        # print((1+self.debugIdent) * ' ' + 'CurrentToken:', self.atualToken)
 
     
-    def analisar(self):
-        self.dbprint('> analisar()')
+    def program(self):
+        self.dbprint('> program()')
         
         self.proximoToken()
         
         self.block()
 
-        self.dbprint('< analisar()')
+        self.dbprint('< program()')
 
         if self.atualToken.token_class == TokenClass.EOF:
             return
         
         
-    
     def block(self):
         self.debugIdent += 1
         self.dbprint('> block()')
@@ -45,7 +43,12 @@ class Parser:
             self.variables()
         if self.testarClasse(TokenClass.KEYWORD_PROCEDURE):
             self.procedures()
-        if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.KEYWORD_CALL, TokenClass.KEYWORD_BEGIN, TokenClass.KEYWORD_IF, TokenClass.KEYWORD_WHILE, TokenClass.KEYWORD_PRINT):
+        if self.testarClasse(TokenClass.IDENTIFIER,
+                             TokenClass.KEYWORD_CALL,
+                             TokenClass.KEYWORD_BEGIN,
+                             TokenClass.KEYWORD_IF,
+                             TokenClass.KEYWORD_WHILE,
+                             TokenClass.KEYWORD_PRINT):
             self.statement()
         
         self.dbprint('< block()')
@@ -103,8 +106,14 @@ class Parser:
 
         elif self.testarClasse(TokenClass.KEYWORD_BEGIN):
             self.validarClasse(TokenClass.KEYWORD_BEGIN)
-            if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.KEYWORD_CALL, TokenClass.KEYWORD_BEGIN, TokenClass.KEYWORD_IF, TokenClass.KEYWORD_WHILE, TokenClass.KEYWORD_PRINT):
+            if self.testarClasse(TokenClass.IDENTIFIER,
+                                 TokenClass.KEYWORD_CALL,
+                                 TokenClass.KEYWORD_BEGIN,
+                                 TokenClass.KEYWORD_IF,
+                                 TokenClass.KEYWORD_WHILE,
+                                 TokenClass.KEYWORD_PRINT):
                 self.compound_stmt()
+
             self.validarClasse(TokenClass.KEYWORD_END)
 
         elif self.testarClasse(TokenClass.KEYWORD_IF):
@@ -130,8 +139,12 @@ class Parser:
     def compound_stmt(self):
         self.statement()
         self.validarClasse(TokenClass.DELIM_SEMICOLON)
-        if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.KEYWORD_CALL, TokenClass.KEYWORD_BEGIN, TokenClass.KEYWORD_IF, TokenClass.KEYWORD_WHILE, TokenClass.KEYWORD_PRINT):
-            # self.validarClasse(TokenClass.IDENTIFIER, TokenClass.KEYWORD_CALL, TokenClass.KEYWORD_BEGIN, TokenClass.KEYWORD_IF, TokenClass.KEYWORD_WHILE, TokenClass.KEYWORD_PRINT):
+        if self.testarClasse(TokenClass.IDENTIFIER,
+                             TokenClass.KEYWORD_CALL,
+                             TokenClass.KEYWORD_BEGIN,
+                             TokenClass.KEYWORD_IF,
+                             TokenClass.KEYWORD_WHILE,
+                             TokenClass.KEYWORD_PRINT):
             self.compound_stmt()
 
 
@@ -281,14 +294,10 @@ class Parser:
 
         print(self.debugIdent * ' ' + f'? testando classes {token_classes} => {self.atualToken}')
         
-        # print('testar', self.atualToken)
         if self.atualToken is None:
             return False
 
         result = self.atualToken.token_class in token_classes
-        
-        # if(result):
-        #     self.proximoToken()
         
         return result
 
@@ -297,7 +306,6 @@ class Parser:
 
         print(self.debugIdent * ' ' + f'! validando classes {token_classes} => {self.atualToken}')
         
-        # print('validar', self.atualToken)
         if self.atualToken is None:
             raise SyntaxError('Unexpected end of input.')
 
