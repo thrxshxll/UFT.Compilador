@@ -1,0 +1,14 @@
+keywords
+\b(var|begin|end|while|do|ret|VAR|CONST|PROCEDURE|BEGIN|END|WHILE|DO|IF|THEN|CALL|PRINT|ODD|EVEN)\b
+
+operators
+(<=|<-|<=|>=|\/\?|#|<|>|=|\+|\*|\/)
+
+delimitadores
+(\(|\)|;|\.|\,)
+
+IntConstant
+\b(?<![A-Za-z_."\'])\d+(?![A-Za-z_."\'])\b
+
+Idenfier
+[a-zA-Z_][a-zA-Z0-9_]*
