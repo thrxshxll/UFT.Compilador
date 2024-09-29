@@ -6,32 +6,10 @@ import re
 class Lex:
     def __init__(self, content = None):
         self.rules = [
-            rules.KeywordConst(), \
-            rules.KeywordVar(), \
-            rules.KeywordProcedure(), \
-            rules.KeywordCall(), \
-            rules.KeywordBegin(), \
-            rules.KeywordEnd(), \
-            rules.KeywordIf(), \
-            rules.KeywordNot(), \
-            rules.KeywordThen(), \
-            rules.KeywordWhile(), \
-            rules.KeywordDo(), \
-            rules.KeywordPrint(), \
-            rules.KeywordOdd(), \
-            rules.KeywordEven(), \
-            rules.OperatorAssign(), \
-            rules.RelationEqual(), \
-            rules.RelationNotEqual(), \
-            rules.RelationLte(), \
-            rules.RelationGte(), \
-            rules.RelationIsDiv(), \
-            rules.RelationLt(), \
-            rules.RelationGt(), \
-            rules.OperatorAdd(), \
-            rules.OperatorSub(), \
-            rules.OperatorMul(), \
-            rules.OperatorDiv(), \
+            rules.Keywords(), \
+            rules.AssignOperator(), \
+            rules.Operators(), \
+            rules.RelationalOperators(), \
             rules.DelimiterOpenParen(), \
             rules.DelimiterCloseParen(), \
             rules.DelimiterComma(), \
@@ -39,7 +17,7 @@ class Lex:
             rules.Identifier(), \
             rules.Number(), \
             rules.Comment(), \
-            rules.Eof(),
+            rules.EOF(),
         ]
         self.content = content
 

@@ -15,163 +15,32 @@ class RuleInterface:
         return None
 
 
-class KeywordConst(RuleInterface):
+class Keywords(RuleInterface):
     def regex_rules(self) -> list[str]:
-        return ['\\bCONST\\b']
+        return ['\\b(CONST|VAR|PROCEDURE|CALL|BEGIN|END|IF|NOT|THEN|WHILE|DO|PRINT|ODD|EVEN)\\b']
     def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_CONST, match)
+        return Token(TokenClass.KEYWORD, match)
 
-class KeywordVar(RuleInterface):
+
+class RelationalOperators(RuleInterface):
     def regex_rules(self) -> list[str]:
-        return ['\\bVAR\\b']
+        return ['(\\=|\\#|\\<|\\<\\=|\\>|\\>\\=|\\/\\?)']
     def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_VAR, match)
+        return Token(TokenClass.RELATIONAL_OPERATOR, match)
 
-class KeywordProcedure(RuleInterface):
+
+class Operators(RuleInterface):
     def regex_rules(self) -> list[str]:
-        return ['\\bPROCEDURE\\b']
+        return ['(\\+|\\-|\\*|\\/)']
     def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_PROCEDURE, match)
-
-class KeywordCall(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bCALL\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_CALL, match)
-
-class KeywordBegin(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bBEGIN\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_BEGIN, match)
-
-class KeywordEnd(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bEND\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_END, match)
-
-class KeywordIf(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bIF\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_IF, match)
-
-class KeywordNot(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bNOT\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_NOT, match)
-
-class KeywordThen(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bTHEN\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_THEN, match)
-
-class KeywordWhile(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bWHILE\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_WHILE, match)
-
-class KeywordDo(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bDO\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_DO, match)
-
-class KeywordPrint(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bPRINT\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_PRINT, match)
-
-class KeywordOdd(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bODD\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_ODD, match)
-
-class KeywordEven(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\bEVEN\\b']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.KEYWORD_EVEN, match)
+        return Token(TokenClass.OPERATOR, match)
 
 
-class RelationEqual(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\=']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.RELATION_EQUAL, match)
-
-class RelationNotEqual(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\#']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.RELATION_NOT_EQUAL, match)
-
-class RelationLt(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\<']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.RELATION_LT, match)
-
-class RelationLte(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\<\\=']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.RELATION_LTE, match)
-
-class RelationGt(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\>']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.RELATION_GT, match)
-
-class RelationGte(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\>\\=']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.RELATION_GTE, match)
-
-class RelationIsDiv(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\/\\?']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.RELATION_ISDIV, match)
-
-
-class OperatorAdd(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\+']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.OPERATOR_ADD, match)
-
-class OperatorSub(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\-']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.OPERATOR_SUB, match)
-
-class OperatorMul(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\*']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.OPERATOR_MUL, match)
-
-class OperatorDiv(RuleInterface):
-    def regex_rules(self) -> list[str]:
-        return ['\\/']
-    def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.OPERATOR_DIV, match)
-
-class OperatorAssign(RuleInterface):
+class AssignOperator(RuleInterface):
     def regex_rules(self) -> list[str]:
         return ['\\<\\-']
     def extract_token(self, match: str) -> Token:
-        return Token(TokenClass.OPERATOR_ASSIGN, match)
+        return Token(TokenClass.ASSIGN_OPERATOR, match)
 
 
 class DelimiterOpenParen(RuleInterface):
@@ -216,7 +85,7 @@ class Comment(RuleInterface):
     def extract_token(self, match: str) -> Token:
         return Token(TokenClass.COMMENT, match)
 
-class Eof(RuleInterface):
+class EOF(RuleInterface):
     def regex_rules(self) -> list[str]:
         return ['\\.']
     def extract_token(self, match: str) -> Token:
