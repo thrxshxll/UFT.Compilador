@@ -6,14 +6,14 @@ class TokenClass(Enum):
     RELATIONAL_OPERATOR = 2,
     OPERATOR = 3,
     ASSIGN_OPERATOR = 4,
-    DELIM_OPEN_PAREN = 27,
-    DELIM_CLOSE_PAREN = 28,
-    DELIM_COMMA = 29,
-    DELIM_SEMICOLON = 30,
-    IDENTIFIER = 31,
-    NUMBER= 32,
-    COMMENT = 33,
-    EOF = 34
+    DELIM_OPEN_PAREN = 5,
+    DELIM_CLOSE_PAREN = 6,
+    DELIM_COMMA = 7,
+    DELIM_SEMICOLON = 8,
+    IDENTIFIER = 9,
+    NUMBER= 10,
+    COMMENT = 11,
+    EOF = 12
     
 
 class Token:

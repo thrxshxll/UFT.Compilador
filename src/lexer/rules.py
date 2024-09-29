@@ -17,14 +17,15 @@ class RuleInterface:
 
 class Keywords(RuleInterface):
     def regex_rules(self) -> list[str]:
-        return ['\\b(CONST|VAR|PROCEDURE|CALL|BEGIN|END|IF|NOT|THEN|WHILE|DO|PRINT|ODD|EVEN)\\b']
+        return [r'\b(CONST|VAR|PROCEDURE|CALL|BEGIN|END|IF|NOT|THEN|WHILE|DO|PRINT|ODD|EVEN)\b']
     def extract_token(self, match: str) -> Token:
         return Token(TokenClass.KEYWORD, match)
 
 
 class RelationalOperators(RuleInterface):
     def regex_rules(self) -> list[str]:
-        return ['(\\=|\\#|\\<|\\<\\=|\\>|\\>\\=|\\/\\?)']
+        return [
+                r'=|#|=|<|>|<=|>=|/\?']
     def extract_token(self, match: str) -> Token:
         return Token(TokenClass.RELATIONAL_OPERATOR, match)
 
