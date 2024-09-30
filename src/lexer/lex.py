@@ -7,8 +7,8 @@ class Lex:
     def __init__(self, content = None):
         self.rules = [
             rules.Keywords(), \
-            rules.RelationalOperators(), \
             rules.AssignOperator(), \
+            rules.RelationalOperators(), \
             rules.Operators(), \
             rules.DelimiterOpenParen(), \
             rules.DelimiterCloseParen(), \
