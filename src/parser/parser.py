@@ -9,12 +9,41 @@ class Parser:
         self.debugIdent = 0                                     #
 
 
+    def testarClasse(self, *token_classes):
+        """
+            Testa se o Token atual pertence às classes passadas como argumento em '*token_classes'.
+        """
+
+        print(self.debugIdent * ' ' + f'? testando classes {token_classes} => {self.atualToken}')
+        
+        if self.atualToken is None:
+            return False
+
+        result = (self.atualToken.token_value in token_classes) or (self.atualToken.token_class in token_classes)
+        
+        return result
+
+    
+    def validarClasse(self, *token_classes):
+
+        print(self.debugIdent * ' ' + f'! validando classes {token_classes} => {self.atualToken}')
+        
+        if self.atualToken is None:
+            raise SyntaxError('Unexpected end of input.')
+
+        if self.atualToken.token_value or self.atualToken.token_class in token_classes:
+            self.proximoToken()
+        else:
+            raise SyntaxError('Unexpected token {}. Expected one of: {}'.format(self.atualToken.token_class, token_classes))
+
+
     def dbprint(self, msg: str):
         print(self.debugIdent * ' ' + msg)
 
 
     def proximoToken(self):
-        self.atualToken = self.codigoFonte.pop(0)
+        if len(self.codigoFonte) > 0:
+            self.atualToken = self.codigoFonte.pop(0)
 
     
     def program(self):
@@ -37,19 +66,20 @@ class Parser:
         if self.atualToken is None:
             return
 
-        if self.testarClasse(TokenClass.KEYWORD_CONST):
+        if self.testarClasse('CONST'):
             self.constants()
-        if self.testarClasse(TokenClass.KEYWORD_VAR):
+        elif self.testarClasse('VAR'):
             self.variables()
-        if self.testarClasse(TokenClass.KEYWORD_PROCEDURE):
+        elif self.testarClasse('PROCEDURE'):
             self.procedures()
-        if self.testarClasse(TokenClass.IDENTIFIER,
-                             TokenClass.KEYWORD_CALL,
-                             TokenClass.KEYWORD_BEGIN,
-                             TokenClass.KEYWORD_IF,
-                             TokenClass.KEYWORD_WHILE,
-                             TokenClass.KEYWORD_PRINT):
-            self.statement()
+        elif self.testarClasse(TokenClass.IDENTIFIER,
+                             'CALL',
+                             'BEGIN',
+                             'IF',
+                             'WHILE',
+                             'PRINT'):
+            self.compound_stmt()
+
         
         self.dbprint('< block()')
         self.debugIdent -= 1
@@ -59,9 +89,9 @@ class Parser:
         self.debugIdent += 1
         self.dbprint('> constants()')
 
-        self.validarClasse(TokenClass.KEYWORD_CONST)
+        self.validarClasse('CONST')
         self.constdecl()
-        self.validarClasse(TokenClass.DELIM_SEMICOLON)
+        self.validarClasse(';')
 
         self.dbprint('< constant()')
         self.debugIdent -= 1
@@ -71,9 +101,9 @@ class Parser:
         self.debugIdent += 1
         self.dbprint('> variables()')
 
-        self.validarClasse(TokenClass.KEYWORD_VAR)
+        self.validarClasse('VAR')
         self.vardecl()
-        self.validarClasse(TokenClass.DELIM_SEMICOLON)
+        self.validarClasse(';')
         
         self.dbprint('< variables()')
         self.debugIdent -= 1
@@ -83,9 +113,11 @@ class Parser:
         self.debugIdent += 1
         self.dbprint('> procedures()')
 
-        self.procdecl()
-        if self.testarClasse(TokenClass.KEYWORD_PROCEDURE):
-            self.procedures()
+        self.validarClasse('PROCEDURE')
+        self.validarClasse(TokenClass.IDENTIFIER)
+        self.validarClasse(';')
+        self.block()
+        self.validarClasse(';')
             
         self.dbprint('< procedures()')
         self.debugIdent -= 1
@@ -97,55 +129,58 @@ class Parser:
 
         if self.testarClasse(TokenClass.IDENTIFIER):
             self.validarClasse(TokenClass.IDENTIFIER)
-            self.validarClasse(TokenClass.OPERATOR_ASSIGN)
+            self.validarClasse('<-')
             self.expression()
 
-        elif self.testarClasse(TokenClass.KEYWORD_CALL):
-            self.validarClasse(TokenClass.KEYWORD_CALL)
+        elif self.testarClasse('CALL'):
+            self.validarClasse('CALL')
             self.validarClasse(TokenClass.IDENTIFIER)
 
-        elif self.testarClasse(TokenClass.KEYWORD_BEGIN):
-            self.validarClasse(TokenClass.KEYWORD_BEGIN)
-            if self.testarClasse(TokenClass.IDENTIFIER,
-                                 TokenClass.KEYWORD_CALL,
-                                 TokenClass.KEYWORD_BEGIN,
-                                 TokenClass.KEYWORD_IF,
-                                 TokenClass.KEYWORD_WHILE,
-                                 TokenClass.KEYWORD_PRINT):
-                self.compound_stmt()
-
-            self.validarClasse(TokenClass.KEYWORD_END)
-
-        elif self.testarClasse(TokenClass.KEYWORD_IF):
-            self.validarClasse(TokenClass.KEYWORD_IF)
+        elif self.testarClasse('IF'):
+            self.validarClasse('IF')
+            if self.testarClasse('NOT'):
+                self.validarClasse('NOT')
             self.condition()
-            self.validarClasse(TokenClass.KEYWORD_THEN)
+            self.validarClasse('THEN')
             self.statement()
 
-        elif self.testarClasse(TokenClass.KEYWORD_WHILE):
-            self.validarClasse(TokenClass.KEYWORD_WHILE)
+        elif self.testarClasse('WHILE'):
+            self.validarClasse('WHILE')
+            if self.testarClasse('NOT'):
+                self.validarClasse('NOT')
             self.condition()
-            self.validarClasse(TokenClass.KEYWORD_DO)
+            self.validarClasse('DO')
             self.statement()
 
-        elif self.testarClasse(TokenClass.KEYWORD_PRINT):
-            self.validarClasse(TokenClass.KEYWORD_PRINT)
+        elif self.testarClasse('PRINT'):
+            self.validarClasse('PRINT')
             self.expression()
+
+        elif self.testarClasse('BEGIN'):
+            self.validarClasse('BEGIN')
+            self.compound_stmt()
+            self.validarClasse('END')
             
         self.dbprint('< statement()')
         self.debugIdent -= 1
 
 
     def compound_stmt(self):
+        self.debugIdent += 1
+        self.dbprint('> compound_stmt()')
+
+
         self.statement()
-        self.validarClasse(TokenClass.DELIM_SEMICOLON)
+        self.validarClasse(';')
         if self.testarClasse(TokenClass.IDENTIFIER,
-                             TokenClass.KEYWORD_CALL,
-                             TokenClass.KEYWORD_BEGIN,
-                             TokenClass.KEYWORD_IF,
-                             TokenClass.KEYWORD_WHILE,
-                             TokenClass.KEYWORD_PRINT):
+                             'CALL',
+                             'IF',
+                             'WHILE',
+                             'PRINT',
+                             'BEGIN',):
             self.compound_stmt()
+        self.dbprint('< compound_stmt()')
+        self.debugIdent -= 1
 
 
     def constdecl(self):
@@ -153,8 +188,8 @@ class Parser:
         self.debugIdent += 1
         self.dbprint('> constdecl()')
         self.constdef()
-        if self.testarClasse(TokenClass.DELIM_COMMA):
-            self.validarClasse(TokenClass.DELIM_COMMA)
+        if self.testarClasse(','):
+            self.validarClasse(',')
             self.constdecl()
             
         self.dbprint('< constdecl()')
@@ -166,8 +201,9 @@ class Parser:
         self.dbprint('> vardecl()')
         
         self.validarClasse(TokenClass.IDENTIFIER)
-        if self.testarClasse(TokenClass.DELIM_COMMA):
-            self.validarClasse(TokenClass.DELIM_COMMA)
+        
+        if self.testarClasse(','):
+            self.validarClasse(',')
             self.vardecl()
             
         self.dbprint('< vardecl()')
@@ -178,11 +214,11 @@ class Parser:
         self.debugIdent += 1
         self.dbprint('> procdecl()')
 
-        self.validarClasse(TokenClass.KEYWORD_PROCEDURE)
+        self.validarClasse('PROCEDURE')
         self.validarClasse(TokenClass.IDENTIFIER)
-        self.validarClasse(TokenClass.DELIM_SEMICOLON)
+        self.validarClasse(';')
         self.block()
-        self.validarClasse(TokenClass.DELIM_SEMICOLON)
+        self.validarClasse(';')
 
         self.dbprint('< procdecl()')
         self.debugIdent -= 1
@@ -194,7 +230,7 @@ class Parser:
         self.dbprint('> constdef()')
 
         self.validarClasse(TokenClass.IDENTIFIER)
-        self.validarClasse(TokenClass.RELATION_EQUAL)
+        self.validarClasse('=')
         self.validarClasse(TokenClass.NUMBER)
 
         self.dbprint('< constdef()')
@@ -205,9 +241,9 @@ class Parser:
         self.debugIdent += 1
         self.dbprint('> condition()')
 
-        if self.testarClasse(TokenClass.KEYWORD_ODD):
+        if self.testarClasse('ODD'):
             self.expression()
-        elif self.testarClasse(TokenClass.KEYWORD_EVEN):
+        elif self.testarClasse('VEN'):
             self.expression()
         else:
             self.expression()
@@ -217,35 +253,43 @@ class Parser:
         self.debugIdent -= 1
         self.dbprint('< condition()')
 
+
     def relation(self):
         self.debugIdent += 1
         self.dbprint('> relation()')
 
-        if self.testarClasse(TokenClass.RELATION_EQUAL,TokenClass.RELATION_NOT_EQUAL,TokenClass.RELATION_LT,TokenClass.RELATION_LTE,TokenClass.RELATION_GT,TokenClass.RELATION_GTE, TokenClass.RELATION_ISDIV):
-            self.validarClasse(TokenClass.RELATION_EQUAL,TokenClass.RELATION_NOT_EQUAL,TokenClass.RELATION_LT,TokenClass.RELATION_LTE,TokenClass.RELATION_GT,TokenClass.RELATION_GTE, TokenClass.RELATION_ISDIV)
+        self.validarClasse('=',
+                           '#',
+                           '<',
+                           '<=',
+                           '>',
+                           '>=',
+                           '/?')
 
-            self.dbprint('< relation()')
-            self.debugIdent -= 1
-            return
-        else:
-            self.validarClasse(TokenClass.RELATION_EQUAL,TokenClass.RELATION_NOT_EQUAL,TokenClass.RELATION_LT,TokenClass.RELATION_LTE,TokenClass.RELATION_GT,TokenClass.RELATION_GTE, TokenClass.RELATION_ISDIV)
-        
+        self.dbprint('< relation()')
+        self.debugIdent -= 1
+        return
 
     def expression(self):
         self.debugIdent += 1
         self.dbprint('> expression()')
 
-        if self.testarClasse(TokenClass.OPERATOR_ADD, TokenClass.OPERATOR_SUB):
-            self.validarClasse(TokenClass.OPERATOR_ADD, TokenClass.OPERATOR_SUB)
+        if self.testarClasse('+','-'):
+            self.sign('+', '-')
 
         self.term()
 
-        if self.testarClasse(TokenClass.OPERATOR_ADD, TokenClass.OPERATOR_SUB):
-            self.validarClasse(TokenClass.OPERATOR_ADD, TokenClass.OPERATOR_SUB)
+        if self.testarClasse('+', '-'):
+            self.validarClasse('+', '-')
             self.term()
 
         self.debugIdent -= 1
         self.dbprint('< expression()')
+        
+
+    def sign(self):
+        self.validarClasse('ADD', 'SUB')
+
 
     def term(self):
         self.debugIdent += 1
@@ -253,7 +297,7 @@ class Parser:
 
         self.factor()
 
-        if self.testarClasse(TokenClass.OPERATOR_DIV, TokenClass.OPERATOR_MUL):
+        if self.testarClasse('/', '*'):
             self.factors()
 
         self.debugIdent -= 1
@@ -264,13 +308,16 @@ class Parser:
         self.debugIdent += 1
         self.dbprint('> factor()')
 
-        if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.NUMBER):
-            self.validarClasse(TokenClass.IDENTIFIER, TokenClass.NUMBER)
+        if self.testarClasse(TokenClass.IDENTIFIER):
+            self.validarClasse(TokenClass.IDENTIFIER)
 
-        elif self.testarClasse(TokenClass.DELIM_OPEN_PAREN):
-            self.validarClasse(TokenClass.DELIM_OPEN_PAREN)
+        elif self.testarClasse(TokenClass.NUMBER):
+            self.validarClasse(TokenClass.NUMBER)            
+
+        elif self.testarClasse('('):
+            self.validarClasse('(')
             self.expression()
-            self.validarClasse(TokenClass.DELIM_CLOSE_PAREN)
+            self.validarClasse(')')
         
         self.debugIdent <= 1
         self.dbprint('< factor()')
@@ -280,36 +327,8 @@ class Parser:
         self.debugIdent += 1
         self.dbprint('> factors()')
 
-        self.validarClasse(TokenClass.OPERATOR_DIV, TokenClass.OPERATOR_MUL)
+        self.validarClasse('/', '*')
         self.factor()
 
         self.debugIdent -= 1
         self.dbprint('< factors()')
-        
-
-    def testarClasse(self, *token_classes):
-        """
-            Testa se a classe do token atual é uma das classes em '*token_classes'.
-        """
-
-        print(self.debugIdent * ' ' + f'? testando classes {token_classes} => {self.atualToken}')
-        
-        if self.atualToken is None:
-            return False
-
-        result = self.atualToken.token_class in token_classes
-        
-        return result
-
-    
-    def validarClasse(self, *token_classes):
-
-        print(self.debugIdent * ' ' + f'! validando classes {token_classes} => {self.atualToken}')
-        
-        if self.atualToken is None:
-            raise SyntaxError('Unexpected end of input.')
-
-        if self.atualToken.token_class in token_classes:
-            self.proximoToken()
-        else:
-            raise SyntaxError('Unexpected token {}. Expected one of: {}'.format(self.atualToken.token_class, token_classes))
