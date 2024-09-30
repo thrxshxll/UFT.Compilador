@@ -25,7 +25,7 @@ class Keywords(RuleInterface):
 class RelationalOperators(RuleInterface):
     def regex_rules(self) -> list[str]:
         return [
-                r'=|#|=|<|>|<=|>=|/\?']
+                r'<=|>=|/\?|=|#|=|<|>']
     def extract_token(self, match: str) -> Token:
         return Token(TokenClass.RELATIONAL_OPERATOR, match)
 
