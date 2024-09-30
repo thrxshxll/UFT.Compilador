@@ -44,6 +44,8 @@ class Parser:
     def proximoToken(self):
         if len(self.codigoFonte) > 0:
             self.atualToken = self.codigoFonte.pop(0)
+        # else:
+            # self.atualToken = None
 
     
     def program(self):
@@ -53,79 +55,71 @@ class Parser:
         
         self.block()
 
-        self.dbprint('< program()')
+        self.validarClasse(TokenClass.EOF)
 
-        if self.atualToken.token_class == TokenClass.EOF:
-            return
-        
+        self.dbprint('< program()')
+                
         
     def block(self):
-        self.debugIdent += 1
         self.dbprint('> block()')
+        self.debugIdent += 2
         
         if self.atualToken is None:
             return
 
         if self.testarClasse('CONST'):
             self.constants()
-        elif self.testarClasse('VAR'):
+        if self.testarClasse('VAR'):
             self.variables()
-        elif self.testarClasse('PROCEDURE'):
+        if self.testarClasse('PROCEDURE'):
             self.procedures()
-        elif self.testarClasse(TokenClass.IDENTIFIER,
-                             'CALL',
-                             'BEGIN',
-                             'IF',
-                             'WHILE',
-                             'PRINT'):
-            self.compound_stmt()
+        if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'BEGIN','IF','WHILE','PRINT'):
+            self.statement()
 
         
+        self.debugIdent -= 2
         self.dbprint('< block()')
-        self.debugIdent -= 1
 
 
     def constants(self):
-        self.debugIdent += 1
         self.dbprint('> constants()')
+        self.debugIdent += 2
 
         self.validarClasse('CONST')
         self.constdecl()
         self.validarClasse(';')
 
+        self.debugIdent -= 2
         self.dbprint('< constant()')
-        self.debugIdent -= 1
 
     
     def variables(self):
-        self.debugIdent += 1
         self.dbprint('> variables()')
+        self.debugIdent += 2
 
         self.validarClasse('VAR')
         self.vardecl()
         self.validarClasse(';')
         
+        self.debugIdent -= 2
         self.dbprint('< variables()')
-        self.debugIdent -= 1
 
 
     def procedures(self):
-        self.debugIdent += 1
         self.dbprint('> procedures()')
+        self.debugIdent += 2
 
-        self.validarClasse('PROCEDURE')
-        self.validarClasse(TokenClass.IDENTIFIER)
-        self.validarClasse(';')
-        self.block()
-        self.validarClasse(';')
+        self.procdecl()
+        if self.testarClasse('PROCEDURE'):
+            self.procedures()
             
+        self.debugIdent -= 2
         self.dbprint('< procedures()')
-        self.debugIdent -= 1
 
 
     def statement(self):
-        self.debugIdent += 1
         self.dbprint('> statement()')
+        self.debugIdent += 2
 
         if self.testarClasse(TokenClass.IDENTIFIER):
             self.validarClasse(TokenClass.IDENTIFIER)
@@ -161,58 +155,53 @@ class Parser:
             self.compound_stmt()
             self.validarClasse('END')
             
+        self.debugIdent -= 2
         self.dbprint('< statement()')
-        self.debugIdent -= 1
 
 
     def compound_stmt(self):
-        self.debugIdent += 1
         self.dbprint('> compound_stmt()')
-
+        self.debugIdent += 2
 
         self.statement()
         self.validarClasse(';')
-        if self.testarClasse(TokenClass.IDENTIFIER,
-                             'CALL',
-                             'IF',
-                             'WHILE',
-                             'PRINT',
-                             'BEGIN',):
+        if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'BEGIN','IF','WHILE','PRINT'):
             self.compound_stmt()
+
+        self.debugIdent -= 2
         self.dbprint('< compound_stmt()')
-        self.debugIdent -= 1
 
 
     def constdecl(self):
         
-        self.debugIdent += 1
         self.dbprint('> constdecl()')
-        self.constdef()
+        self.debugIdent += 2
+        if self.testarClasse(TokenClass.IDENTIFIER):
+            self.constdef()
         if self.testarClasse(','):
             self.validarClasse(',')
             self.constdecl()
             
+        self.debugIdent -= 2
         self.dbprint('< constdecl()')
-        self.debugIdent -= 1
 
 
     def vardecl(self):
-        self.debugIdent += 1
         self.dbprint('> vardecl()')
+        self.debugIdent += 2
         
         self.validarClasse(TokenClass.IDENTIFIER)
-        
         if self.testarClasse(','):
             self.validarClasse(',')
             self.vardecl()
             
+        self.debugIdent -= 2
         self.dbprint('< vardecl()')
-        self.debugIdent -= 1
 
 
     def procdecl(self):
-        self.debugIdent += 1
         self.dbprint('> procdecl()')
+        self.debugIdent += 2
 
         self.validarClasse('PROCEDURE')
         self.validarClasse(TokenClass.IDENTIFIER)
@@ -220,43 +209,41 @@ class Parser:
         self.block()
         self.validarClasse(';')
 
+        self.debugIdent -= 2
         self.dbprint('< procdecl()')
-        self.debugIdent -= 1
         
-
     
     def constdef(self):
-        self.debugIdent += 1
         self.dbprint('> constdef()')
+        self.debugIdent += 2
 
         self.validarClasse(TokenClass.IDENTIFIER)
         self.validarClasse('=')
         self.validarClasse(TokenClass.NUMBER)
 
+        self.debugIdent -= 2
         self.dbprint('< constdef()')
-        self.debugIdent -= 1
         
 
     def condition(self):
-        self.debugIdent += 1
         self.dbprint('> condition()')
+        self.debugIdent += 2
 
-        if self.testarClasse('ODD'):
-            self.expression()
-        elif self.testarClasse('VEN'):
+        if self.testarClasse('ODD', 'EVEN'):
+            self.validarClasse('ODD', 'EVEN')
             self.expression()
         else:
             self.expression()
             self.relation()
             self.expression()
 
-        self.debugIdent -= 1
+        self.debugIdent -= 2
         self.dbprint('< condition()')
 
 
     def relation(self):
-        self.debugIdent += 1
         self.dbprint('> relation()')
+        self.debugIdent += 2
 
         self.validarClasse('=',
                            '#',
@@ -266,16 +253,16 @@ class Parser:
                            '>=',
                            '/?')
 
+        self.debugIdent -= 2
         self.dbprint('< relation()')
-        self.debugIdent -= 1
         return
 
     def expression(self):
-        self.debugIdent += 1
         self.dbprint('> expression()')
+        self.debugIdent += 2
 
         if self.testarClasse('+','-'):
-            self.sign('+', '-')
+            self.sign()
 
         self.term()
 
@@ -283,30 +270,30 @@ class Parser:
             self.validarClasse('+', '-')
             self.term()
 
-        self.debugIdent -= 1
+        self.debugIdent -= 2
         self.dbprint('< expression()')
         
 
     def sign(self):
-        self.validarClasse('ADD', 'SUB')
+        self.validarClasse('+', '-')
 
 
     def term(self):
-        self.debugIdent += 1
         self.dbprint('> term()')
+        self.debugIdent += 2
 
         self.factor()
 
         if self.testarClasse('/', '*'):
             self.factors()
 
-        self.debugIdent -= 1
+        self.debugIdent -= 2
         self.dbprint('< term()')
 
 
     def factor(self):
-        self.debugIdent += 1
         self.dbprint('> factor()')
+        self.debugIdent += 2
 
         if self.testarClasse(TokenClass.IDENTIFIER):
             self.validarClasse(TokenClass.IDENTIFIER)
@@ -319,16 +306,16 @@ class Parser:
             self.expression()
             self.validarClasse(')')
         
-        self.debugIdent <= 1
+        self.debugIdent -= 2
         self.dbprint('< factor()')
             
 
     def factors(self):
-        self.debugIdent += 1
         self.dbprint('> factors()')
+        self.debugIdent += 2
 
         self.validarClasse('/', '*')
         self.factor()
 
-        self.debugIdent -= 1
+        self.debugIdent -= 2
         self.dbprint('< factors()')
