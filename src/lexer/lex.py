@@ -5,6 +5,7 @@ import re
 
 class Lex:
     def __init__(self, content = None):
+        self.content = content
         self.rules = [
             rules.Keywords(), \
             rules.AssignOperator(), \
@@ -19,7 +20,6 @@ class Lex:
             rules.Comment(), \
             rules.EOF(),
         ]
-        self.content = content
 
 
     def code2tokens(self) -> list:
