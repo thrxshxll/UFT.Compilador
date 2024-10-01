@@ -31,7 +31,7 @@ class Parser:
         if self.atualToken is None:
             raise SyntaxError('Unexpected end of input.')
 
-        if self.atualToken.token_value or self.atualToken.token_class in token_classes:
+        if (self.atualToken.token_value in token_classes) or (self.atualToken.token_class in token_classes):
             self.proximoToken()
         else:
             raise SyntaxError('Unexpected token {}. Expected one of: {}'.format(self.atualToken.token_class, token_classes))
