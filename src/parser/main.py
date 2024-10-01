@@ -3,17 +3,17 @@ from parser import Parser
 import sys
 
 
-def openFile(filename: str) -> str:
-    with open(filename, mode='r') as codefile:
-        code = ''
-        for line in codefile:
-            code += ''.join(line)
-    return code
+def fopen(filename: str):
+    with open(filename, mode='r') as file:
+        return file.read()
 
 
 if __name__ == '__main__':
 
-    code = openFile(sys.argv[1])
+    if len(sys.argv) < 2:
+        raise ValueError('Passe o arquivo para o Parser')
+
+    code = fopen(sys.argv[1])
 
     parser = Parser(code)
     parser.program()
