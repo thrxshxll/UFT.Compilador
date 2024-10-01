@@ -1,20 +1,22 @@
 from lex import Lex
 import sys
 
+def fopen(codefile):
+    with open(codefile, mode='r') as file:
+        return file.read()
 
-with open(sys.argv[1], mode='r') as codefile:
-    code = ''
-    for line in codefile:
-        code += ''.join(line)
 
-print('scanner content')
-content = code
-print(content, end='\n\n')
+if __name__ == '__main__':
 
-lex = Lex(content)
+    if len(sys.argv) < 2:
+        raise ValueError('Passe o arquivo para o Lexer')
 
-while True:
-    token_atual = lex.next()
-    if token_atual is None:
-        break
-    print(f'{token_atual}\n')
+    code = fopen(sys.argv[1])
+
+    lex = Lex(code)
+
+    while True:
+        token_atual = lex.next()
+        if token_atual is None:
+            break
+        print(f'{token_atual}\n')
