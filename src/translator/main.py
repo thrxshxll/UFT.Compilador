@@ -1,31 +1,19 @@
 from lex import Lex
-from myParser import Parser
-
+from translator import Translator
 import sys
 
 
-def openFile(filename: str) -> str:
-    with open(filename, mode='r') as codefile:
-        code = ''
-        for line in codefile:
-            code += ''.join(line)
-    return code
+def fopen(filename: str) -> str:
+    with open(filename, mode='r') as file:
+        return file.read()
 
 
 if __name__ == '__main__':
 
-    code = openFile(sys.argv[1])
+    if len(sys.argv) < 2:
+        raise ValueError('Passe o código-fonte como argumento para o Compilador')
 
-    parser = Parser(code)
-    parser.analisar()
+    code = fopen(sys.argv[1])
 
-
-
-
-    # lex = Lex(code)
-
-    # while True:
-    #     token_atual = lex.next()
-    #     if token_atual is None:
-    #         break
-    #     print(token_atual)
+    parser = Translator(code)
+    parser.program()
