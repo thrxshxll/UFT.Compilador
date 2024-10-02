@@ -1,12 +1,13 @@
-VAR x, squ, z;
+CONST x = 2;
 
 PROCEDURE square;
+VAR x;
+x <- 2;
 BEGIN
   squ <- x * x;
   PRINT squ;
 END;
 
 BEGIN
-  cir <- z * z;
   CALL square;
 END.

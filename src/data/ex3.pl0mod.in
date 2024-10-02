@@ -2,7 +2,6 @@ CONST max = 100;
 VAR arg, ret;
 
 PROCEDURE checkprime;
-VAR i;
 BEGIN
   ret <- 1;
   i <- 2;
