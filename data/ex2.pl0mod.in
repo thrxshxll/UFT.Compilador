@@ -1,16 +1,16 @@
-VAR x, squ;
-
-PROCEDURE square;
+PROCEDURE odd;
 BEGIN
-  squ <- x * x;
+  num <- 1;
+  WHILE num <= 16 DO
+  BEGIN
+    IF ODD num THEN
+    BEGIN
+      PRINT num;
+    END;
+    num <- num + 1;
+  END;
 END;
 
 BEGIN
-  x <- 1;
-  WHILE x /? 10 DO
-  BEGIN
-    CALL square;
-    PRINT squ;
-    x <- x + 1;
-  END;
+  CALL odd;
 END.

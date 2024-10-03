@@ -1,32 +1,13 @@
-VAR x, squ;
-
-PROCEDURE square;
+PROCEDURE one2ten;
 BEGIN
-  PRINT arg;
-  squ <- x * x;
-
-  IF ret = 1 THEN
+  x <- 1;
+  WHILE x <= 10 DO
   BEGIN
-    PRINT arg;
-    PRINT arg;
-    PRINT arg;
-  END;
-
-  WHILE x /? 10 DO
-  BEGIN
-    CALL square;
-    PRINT squ;
+    PRINT x;
     x <- x + 1;
   END;
-  
 END;
 
 BEGIN
-  x <- 1;
-  WHILE x /? 10 DO
-  BEGIN
-    CALL square;
-    PRINT squ;
-    x <- x + 1;
-  END;
+  CALL one2ten;
 END.

@@ -1,0 +1,16 @@
+PROCEDURE even;
+BEGIN
+  num <- 1;
+  WHILE num <= 16 DO
+  BEGIN
+    IF EVEN num THEN
+    BEGIN
+      PRINT num;
+    END;
+    num <- num + 1;
+  END;
+END;
+
+BEGIN
+  CALL even;
+END.
