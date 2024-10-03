@@ -22,7 +22,10 @@ BEGIN
   WHILE arg < max DO
   BEGIN
     CALL checkprime;
-    IF ret = 1 THEN PRINT arg;
+    IF ret = 1 THEN
+    BEGIN
+      PRINT arg;
+    END;
     arg <- arg + 1;
   END;
 END;

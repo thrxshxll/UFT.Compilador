@@ -1,13 +1,32 @@
-CONST x = 2;
+VAR x, squ;
 
 PROCEDURE square;
-VAR x;
-x <- 2;
 BEGIN
+  PRINT arg;
   squ <- x * x;
-  PRINT squ;
+
+  IF ret = 1 THEN
+  BEGIN
+    PRINT arg;
+    PRINT arg;
+    PRINT arg;
+  END;
+
+  WHILE x /? 10 DO
+  BEGIN
+    CALL square;
+    PRINT squ;
+    x <- x + 1;
+  END;
+  
 END;
 
 BEGIN
-  CALL square;
+  x <- 1;
+  WHILE x /? 10 DO
+  BEGIN
+    CALL square;
+    PRINT squ;
+    x <- x + 1;
+  END;
 END.
