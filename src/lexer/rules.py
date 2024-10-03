@@ -17,7 +17,7 @@ class RuleInterface:
 
 class Keywords(RuleInterface):
     def regex_rules(self) -> list[str]:
-        return [r'\b(CONST|VAR|PROCEDURE|CALL|BEGIN|END|IF|NOT|THEN|WHILE|DO|PRINT|ODD|EVEN)\b']
+        return [r'\b(CONST|VAR|PROCEDURE|CALL|BEGIN|RETURN|END|IF|NOT|THEN|WHILE|DO|PRINT|ODD|EVEN)\b']
     def extract_token(self, match: str) -> Token:
         return Token(TokenClass.KEYWORD, match)
 
