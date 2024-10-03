@@ -1,0 +1,14 @@
+CONST x = 1;
+
+PROCEDURE loopprint x;
+BEGIN
+  WHILE x <= 16 DO
+  BEGIN
+    PRINT x;
+    x <- x + 1;
+  END;
+END;
+
+BEGIN
+  CALL loopprint x;
+END.
