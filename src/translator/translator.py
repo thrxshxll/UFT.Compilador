@@ -268,6 +268,9 @@ class Translator:
             _re = self.relation()
             _exp2 = self.expression()
 
+            if '%' in _re:
+                return f'{_exp1}{_re}{_exp2} == 0'
+
             return f'{_exp1}{_re}{_exp2}'
 
 
