@@ -237,7 +237,7 @@ class Translator:
         if self.testarClasse('EVEN'):
             self.validarClasse('EVEN')
             _exp = self.expression()
-            return f'{_exp} 2 == 0'
+            return f'{_exp} % 2 == 0'
 
         else:
             _exp1 = self.expression()
