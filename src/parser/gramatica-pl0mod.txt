@@ -14,12 +14,15 @@
 <vardecl>            --> <Ident> "," <vardecl>
                        | <Ident>
 
+<arg>            --> <Ident> "," <arg>
+                       | <Ident>
+
 <procedures>         --> <procdecl> <procedures>?
 
-<procdecl>           --> "PROCEDURE" <Ident> ";" <block> ";"
+<procdecl>           --> "PROCEDURE" <Ident> <arg>? ";" <block> ";"
 
 <statement>          --> <Ident> "<-" <expression>
-                       | "CALL" <Ident>
+                       | "CALL" <Ident> <arg>?
                        | "BEGIN" <compound statement> "END"
                        | "IF" "NOT"? <condition> "THEN" <statement>
                        | "WHILE" "NOT"? <condition> "DO" <statement>

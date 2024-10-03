@@ -65,16 +65,16 @@ class Translator:
         if self.atualToken is None:
             return
 
-        tmp = ''
+        ret = ''
         if self.testarClasse('CONST'):
-            tmp += self.constants()
+            ret += self.constants()
         if self.testarClasse('VAR'):
-            tmp += self.variables()
+            ret += self.variables()
         if self.testarClasse('PROCEDURE'):
-            tmp += self.procedures()
+            ret += self.procedures()
         if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'BEGIN','IF','WHILE','PRINT'):
-            tmp += self.statement()
-        return tmp
+            ret += self.statement()
+        return ret
 
 
     def constants(self):
@@ -113,8 +113,15 @@ class Translator:
 
         elif self.testarClasse('CALL'):
             self.validarClasse('CALL')
-            tmp = self.validarClasse(TokenClass.IDENTIFIER)
-            return f'{tmp}()\n'
+            ret = self.validarClasse(TokenClass.IDENTIFIER)
+            _args = ''
+            if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.NUMBER):
+                _args += self.argdecl()
+
+            if len(_args) > 0:
+                return f'{ret}({_args})\n'
+
+            return f'{ret}()\n'
 
         elif self.testarClasse('IF'):
             self.validarClasse('IF')
@@ -196,23 +203,40 @@ class Translator:
 
     def vardecl(self):
         
-        tmp = f'{self.validarClasse(TokenClass.IDENTIFIER)} = 0'
+        ret = f'{self.validarClasse(TokenClass.IDENTIFIER)} = 0'
         if self.testarClasse(','):
             self.validarClasse(',')
-            tmp += f'\n{self.vardecl()}'
-        return self.blockIdent*' ' + tmp
+            ret += f'\n{self.vardecl()}'
+        return self.blockIdent*' ' + ret
+    
+
+    def argdecl(self):
+        
+        ret = f'{self.validarClasse(TokenClass.IDENTIFIER)}'
+        if self.testarClasse(','):
+            ret += self.validarClasse(',') + ' '
+            ret += f'{self.argdecl()}'
+        return ret
             
 
     def procdecl(self):
 
         self.blockIdent += 4
+
         self.validarClasse('PROCEDURE')
         _id = self.validarClasse(TokenClass.IDENTIFIER)
+        _args = ''
+        if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.NUMBER):
+            _args += self.argdecl()
         self.validarClasse(';')
         _block = self.block()
         self.validarClasse(';')
 
-        _def = f'def {_id}():\n' + _block
+        if len(_args) > 0:
+            _def = f'def {_id}({_args}):\n' + _block
+        else:
+            _def = f'def {_id}():\n' + _block
+
         self.blockIdent -= 4
         return _def
 
