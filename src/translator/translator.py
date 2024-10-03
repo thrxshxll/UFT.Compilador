@@ -82,7 +82,7 @@ class Translator:
         self.validarClasse('CONST')
         tmp = self.constdecl()
         self.validarClasse(';')
-        return self.blockIdent*' ' + f'{tmp}\n'
+        return f'{tmp}\n'
 
     
     def variables(self):
@@ -90,7 +90,7 @@ class Translator:
         self.validarClasse('VAR')
         tmp = self.vardecl()
         self.validarClasse(';')
-        return self.blockIdent*' ' + f'{tmp}\n'
+        return f'{tmp}\n'
         
 
 
@@ -118,6 +118,9 @@ class Translator:
 
         elif self.testarClasse('IF'):
             self.validarClasse('IF')
+            
+            ret = self.blockIdent*' '
+            
             self.blockIdent += 4
             
             _condition = ''
@@ -126,14 +129,19 @@ class Translator:
                 _condition += 'not '
             _condition += self.condition()
             self.validarClasse('THEN')
-            _block = self.statement()
-            tmp = f'if {_condition}:\n{_block}'
-            
+            _stmt = self.statement()
+
+
+            ret += f'if {_condition}:\n' + _stmt
+
             self.blockIdent -= 4
-            return tmp
+            return ret
 
         elif self.testarClasse('WHILE'):
             self.validarClasse('WHILE')
+
+            ret = self.blockIdent*' '
+
             self.blockIdent += 4
             
             _condition = ''
@@ -142,17 +150,17 @@ class Translator:
                 _condition += 'not '
             _condition += self.condition()
             self.validarClasse('DO')
-            _block = self.statement()
-            tmp = f'while {_condition}:\n{_block}'
+            _stmt = self.statement()
+            ret += f'while {_condition}:\n' + _stmt
             
             self.blockIdent -= 4
-            return tmp
+            return ret
             
 
         elif self.testarClasse('PRINT'):
             self.validarClasse('PRINT')
             tmp = self.expression()
-            return self.blockIdent*' ' + f'print({tmp})\n'
+            return f'print({tmp})\n'
 
 
         elif self.testarClasse('BEGIN'):
@@ -164,11 +172,16 @@ class Translator:
 
     def compound_stmt(self):
 
-        tmp = self.statement()
+        if self.testarClasse(TokenClass.IDENTIFIER,'CALL','BEGIN','PRINT'):
+            tmp = self.blockIdent*' ' + self.statement()
+        else:
+            tmp = self.statement()
+            
         self.validarClasse(';')
-        if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'BEGIN','IF','WHILE','PRINT'):
+        if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'IF', 'WHILE','BEGIN','PRINT'):
             tmp += self.compound_stmt()
-        return self.blockIdent*' ' + tmp
+
+        return tmp
 
 
     def constdecl(self):
@@ -178,7 +191,7 @@ class Translator:
         if self.testarClasse(','):
             self.validarClasse(',')
             tmp += '\n' + self.constdecl()
-        return tmp
+        return self.blockIdent*' ' + tmp
             
 
     def vardecl(self):
@@ -187,7 +200,7 @@ class Translator:
         if self.testarClasse(','):
             self.validarClasse(',')
             tmp += f'\n{self.vardecl()}'
-        return tmp
+        return self.blockIdent*' ' + tmp
             
 
     def procdecl(self):
@@ -231,48 +244,47 @@ class Translator:
             _re = self.relation()
             _exp2 = self.expression()
 
-            if _re == '%':
-                return f'{_exp1} % {_exp2} == 0'
-            return f'{_exp1} {_re} {_exp2}'
+            return f'{_exp1}{_re}{_exp2}'
 
 
     def relation(self):
 
-        tmp = self.validarClasse('=', '#', '<', '<=', '>', '>=', '/?')
+        ret = self.validarClasse('=', '#', '<', '<=', '>', '>=', '/?')
 
-        if tmp == '/?':
-            tmp = '%'
-
-        if tmp == '=':
-            tmp = '=='
-        return tmp
+        if ret == '/?':
+            ret = '%'
+        elif ret == '=':
+            ret = '=='
+            
+        return f' {ret} '
 
 
     def expression(self):
 
-        tmp = ''
+        ret = ''
         if self.testarClasse('+','-'):
-            tmp += self.sign()
+            ret += self.sign()
 
-        tmp += self.term()
+        ret += self.term()
 
         if self.testarClasse('+', '-'):
-            tmp += self.validarClasse('+', '-')
-            tmp += self.term()
-        return tmp
+            ret += self.sign()
+            ret += self.term()
+        return ret
         
 
     def sign(self):
-        return self.validarClasse('+', '-')
+        ret = self.validarClasse('+', '-')
+        return f' {ret} '
 
 
     def term(self):
 
-        tmp = self.factor()
+        ret = self.factor()
 
         if self.testarClasse('/', '*'):
-            tmp += self.factors()
-        return tmp
+            ret += self.factors()
+        return f'{ret}'
 
 
     def factor(self):
@@ -292,7 +304,7 @@ class Translator:
 
     def factors(self):
 
-        tmp = ''
-        tmp += self.validarClasse('/', '*')
-        tmp += self.factor()
-        return tmp
+        ret = f" {self.validarClasse('/', '*')} "
+
+        ret += self.factor()
+        return ret
