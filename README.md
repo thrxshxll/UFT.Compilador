@@ -95,11 +95,6 @@ No diretório `data/` há alguns programas prontos para serem usados como testes
             └── translator.py
 
 
-## Obs:
-
-Caso tenha interesse em saber mais sobre os processos intermediários do compilador da PL0MOD, como Lexer, Parser e Translator, terá um README.md para cada um deles nas suas devidas branches. Então dê uma olhada.
-
-
 ## Gramática Formal da PL0MOD
 
 
