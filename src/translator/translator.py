@@ -106,22 +106,28 @@ class Translator:
     def statement(self):
 
         if self.testarClasse(TokenClass.IDENTIFIER):
-            id = self.validarClasse(TokenClass.IDENTIFIER)
+            _id = self.validarClasse(TokenClass.IDENTIFIER)
             self.validarClasse('<-')
-            exp = self.expression()
-            return f'{id} = {exp}\n'
+            _exp = self.expression()
+            return f'{_id} = {_exp}\n'
 
         elif self.testarClasse('CALL'):
             self.validarClasse('CALL')
-            ret = self.validarClasse(TokenClass.IDENTIFIER)
+            _id0 = _id1 = ''
+            _id0 += self.validarClasse(TokenClass.IDENTIFIER)
+
+            if self.testarClasse('<-'):
+                self.validarClasse('<-')
+                _id1 = self.validarClasse(TokenClass.IDENTIFIER)
+
             _args = ''
             if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.NUMBER):
                 _args += self.argdecl()
+            
+            if len(_id1) > 0:
+                return f'{_id0} = {_id1}({_args})\n'
 
-            if len(_args) > 0:
-                return f'{ret}({_args})\n'
-
-            return f'{ret}()\n'
+            return f'{_id0}({_args})\n'
 
         elif self.testarClasse('IF'):
             self.validarClasse('IF')
@@ -168,6 +174,12 @@ class Translator:
             self.validarClasse('PRINT')
             tmp = self.expression()
             return f'print({tmp})\n'
+        
+
+        elif self.testarClasse('RETURN'):
+            self.validarClasse('RETURN')
+            _ret = self.validarClasse(TokenClass.IDENTIFIER)
+            return f'return {_ret}'
 
 
         elif self.testarClasse('BEGIN'):
@@ -179,13 +191,13 @@ class Translator:
 
     def compound_stmt(self):
 
-        if self.testarClasse(TokenClass.IDENTIFIER,'CALL','BEGIN','PRINT'):
+        if self.testarClasse(TokenClass.IDENTIFIER,'CALL','BEGIN','PRINT','RETURN'):
             tmp = self.blockIdent*' ' + self.statement()
         else:
             tmp = self.statement()
             
         self.validarClasse(';')
-        if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'IF', 'WHILE','BEGIN','PRINT'):
+        if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'IF', 'WHILE','BEGIN','PRINT','RETURN'):
             tmp += self.compound_stmt()
 
         return tmp
@@ -245,7 +257,7 @@ class Translator:
     def constdef(self):
 
         _id = self.validarClasse(TokenClass.IDENTIFIER)
-        _re = self.validarClasse('=')
+        self.validarClasse('=')
         _num = self.validarClasse(TokenClass.NUMBER)
 
         return f'{_id} = {_num}'
@@ -276,7 +288,7 @@ class Translator:
 
     def relation(self):
 
-        ret = self.validarClasse('=', '#', '<', '<=', '>', '>=', '/?')
+        ret = self.validarClasse('=','#','<','<=','>','>=','/?')
 
         if ret == '/?':
             ret = '%'
