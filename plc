@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if test ${#@} -eq 1; then
+    pl0mod_src_file="$1"
+    pysrc=$(python3 src/translator/main.py "$pl0mod_src_file")
+    python3 -c "$pysrc"
+    exit 0
+else
+    echo "Error: *pl0mod file expected."
+    exit 1
+fi
