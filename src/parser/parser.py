@@ -129,6 +129,8 @@ class Parser:
         elif self.testarClasse('CALL'):
             self.validarClasse('CALL')
             self.validarClasse(TokenClass.IDENTIFIER)
+            if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.NUMBER):
+                self.argdecl()
 
         elif self.testarClasse('IF'):
             self.validarClasse('IF')
@@ -150,6 +152,12 @@ class Parser:
             self.validarClasse('PRINT')
             self.expression()
 
+        
+        elif self.testarClasse('RETURN'):
+            self.validarClasse('RETURN')
+            self.validarClasse(TokenClass.IDENTIFIER)
+
+
         elif self.testarClasse('BEGIN'):
             self.validarClasse('BEGIN')
             self.compound_stmt()
@@ -165,7 +173,7 @@ class Parser:
 
         self.statement()
         self.validarClasse(';')
-        if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'BEGIN','IF','WHILE','PRINT'):
+        if self.testarClasse(TokenClass.IDENTIFIER,'CALL', 'BEGIN','IF','WHILE','PRINT', 'RETURN'):
             self.compound_stmt()
 
         self.debugIdent -= 2
@@ -199,12 +207,22 @@ class Parser:
         self.dbprint('< vardecl()')
 
 
+    def argdecl(self):
+        
+        f'{self.validarClasse(TokenClass.IDENTIFIER)}'
+        if self.testarClasse(','):
+            self.validarClasse(',')
+            self.argdecl()
+
+
     def procdecl(self):
         self.dbprint('> procdecl()')
         self.debugIdent += 2
 
         self.validarClasse('PROCEDURE')
         self.validarClasse(TokenClass.IDENTIFIER)
+        if self.testarClasse(TokenClass.IDENTIFIER, TokenClass.NUMBER):
+            self.argdecl()
         self.validarClasse(';')
         self.block()
         self.validarClasse(';')
@@ -245,13 +263,7 @@ class Parser:
         self.dbprint('> relation()')
         self.debugIdent += 2
 
-        self.validarClasse('=',
-                           '#',
-                           '<',
-                           '<=',
-                           '>',
-                           '>=',
-                           '/?')
+        self.validarClasse('=','#','<','<=','>','>=','/?')
 
         self.debugIdent -= 2
         self.dbprint('< relation()')
@@ -267,7 +279,7 @@ class Parser:
         self.term()
 
         if self.testarClasse('+', '-'):
-            self.validarClasse('+', '-')
+            self.sign()
             self.term()
 
         self.debugIdent -= 2
