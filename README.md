@@ -7,26 +7,26 @@ ajuda em uma melhor compreensão de como as linguagens de programação interpre
 
 O **Analisador Léxico (Scanner)** se dedica a dividir a sequência de caracteres de um código fonte escrito em PL0MOD em partes significativas, que são os tokens, e classificá-las de acordo com a grámática especificada em `pl0mod.grammar`. Se um token que não pertence à gramática for encontrado, o Lexer emitirá um erro (LexerError).
 
-O **Analisador Sintático (Parser)** é dedicado a avaliar se os token repassados pelo **Scanner** estão de acordo com a gramática; isto é, se o token foi escrito corretamente no código fonte em questão, sendo isso avaliado considerando, além da gramática da linguagem  (`pl0mod.grammar`), a classe e a ordem que o token foi escrito no código fonte. O Parser da PL0MOD é um Analisador Descendente Recursivo, caso surja a curiosidade.
+O **Analisador Sintático (Parser)** é dedicado a avaliar se os tokens repassados pelo **Scanner** estão de acordo com a gramática; isto é, se o token foi escrito corretamente no código fonte em questão, sendo isso avaliado considerando, além da gramática da linguagem  (`pl0mod.grammar`), a classe e a ordem que o token foi escrito no código fonte. Se um token, ou um conjunto de tokens, não estiver de acordo com a gramática da linguagem pl0mod, o Parser emitirá um erro (SyntaxError). O Parser da PL0MOD é um Analisador Descendente Recursivo, caso surja a curiosidade.
 
-O **Tradutor (Translator)** é dedicado a gerar códigos para a arquitetura-alvo, que no caso da PL0MOD a arquitetura-alvo são códigos em Python. Ou seja, se o token, ou o conjunto de token, passou pelo Lexer e Parser sem erros, então o **Translator** faz a conversão para código Python.
+O **Tradutor (Translator)** é dedicado a gerar códigos para a arquitetura-alvo, que no caso da PL0MOD a arquitetura-alvo são códigos em Python. Ou seja, se o token, ou o conjunto de tokens, passou pelo Lexer e Parser sem erros, então o **Translator** faz a conversão para código Python.
 
 A PLOMOD é uma linguagem de programação simplificada, mas, como será mostrado adiante, pode ser usada para escrever programas simples, como um programa para verificar se um número é ímpar ou par e até mesmo verificar quais os números primos em um dado intervalo!
 
-A PLOMOD possui as estruturas básicas que normalmente são encontradas em uma linguagem de programação, como as estruturas condicionais, estruturas derepetição, funções, operadores matemáticos e relacionais, e variáves.
+A PLOMOD possui as estruturas básicas que normalmente são encontradas em uma linguagem de programação, como as estruturas condicionais, estruturas de repetição, funções, operadores matemáticos e relacionais, e variáves.
 
 O compilador da PL0MOD foi implementado em Python e o código "de máquina" gerado pelo compilador é o "Pytcode", que na verdade é um código em Python que será executado pelo interpredor Python. Ou seja:
 
-    +--------------+        +----------------------------+        +--------------+
-    |              |        |                            |        |              |
-    |   *.pl0mod   |   =>   | Lexer > Parser > Traslator |   =>   |     *.py     |
-    |              |        |                            |        |              |
-    +--------------+        +----------------------------+        +--------------+
-                                       compiler
+    +--------------+        +-----------------------------+        +--------------+
+    |              |        |                             |        |              |
+    |   *.pl0mod   |   =>   | Lexer > Parser > Translator |   =>   |     *.py     |
+    |              |        |                             |        |              |
+    +--------------+        +-----------------------------+        +--------------+
+                                        compiler
 
-Esse processo de conversão, ou tradução, é o fundamento envolvido no processo de compilação real de linguagens compiladas. Os processos geralmente envolve a análise léxica, análise sintática, análise semântica, geração de código intermediário e a geração do código final. Está última etapa é a conversão do código intermediário em código de máquina específico para a arquitetura alvo (como x86, ARM, etc.). O código gerado é o que a máquina realmente pode entender e executar.
+Esse processo de conversão, ou tradução, é o fundamento envolvido no processo de compilação real de linguagens compiladas. Os processos geralmente envolvem a análise léxica, análise sintática, análise semântica, geração de código intermediário e a geração do código final. Está última etapa é a conversão do código intermediário em código de máquina específico para a arquitetura alvo (como x86, ARM, etc.). O código gerado é o que a máquina realmente pode entender e executar.
 
-Mas na PL0MOD os projetistas decidiram se aproveitar do interpretador Python e por isso o arquivo final final do compilador é um Pytcode (*.py), sendo este interpretador pelo interpretador Python.
+Mas na PL0MOD, os projetistas decidiram se aproveitar do interpretador Python e por isso o arquivo final do compilador é um Pytcode (*.py), sendo este executado pelo interpretador Python.
 
 
 ### PL0MOD Compiler (PLC)
@@ -50,7 +50,7 @@ Instale o Python em sua máquina. O projeto foi desenvolvido utilizando o Python
     git clone -b main https://github.com/yurincmt/pl0mod-language.git ; cd pl0mod-language
 
 
-#### Progame e execute em pl0mod
+#### Programe e execute em pl0mod
 
 Dado que você programou em pl0m0d, rode o programa usando o `plc` da seguinte forma:
 
