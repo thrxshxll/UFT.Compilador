@@ -22,7 +22,8 @@
 <procdecl>           --> "PROCEDURE" <Ident> <arg>? ";" <block> ";"
 
 <statement>          --> <Ident> "<-" <expression>
-                       | "CALL" <Ident> <arg>?
+                       | "RETURN" <Ident>
+                       | "CALL" (<Ident> "<-")? <Ident> <arg>?
                        | "BEGIN" <compound statement> "END"
                        | "IF" "NOT"? <condition> "THEN" <statement>
                        | "WHILE" "NOT"? <condition> "DO" <statement>
