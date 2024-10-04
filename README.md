@@ -38,6 +38,7 @@ O utilitário `plc` é o compilador e carregador da PL0MOD; ele recebe um arquiv
 
 Feita as devidas apresentações, agora é hora de ver a PL0MOD em ação!
 
+[emacao.webm](https://github.com/user-attachments/assets/546991ef-1ec1-4c98-92bd-ea9532ef7e31)
 
 
 ## Experimente Em Sua Máquina
